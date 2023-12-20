@@ -44,31 +44,6 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: Redhat | Ensure have enough randomness
-  ansible.builtin.yum:
-    name:
-      - haveged
-      - rng-tools
-      - gnupg
-      - acl
-    state: present
-    update_cache: yes
-  when: ansible_os_family == "RedHat"
-  become: yes
-  register: pkg_result
-  until: pkg_result is success
-- name: Enable haveged - redhat
-  ansible.builtin.service:
-    name: haveged
-    state: started
-    enabled: yes
-  become: yes
-  when: >
-    ansible_os_family == "RedHat" and
-    not (ansible_virtualization_type is defined and (
-        ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd"
-      )
-    )
 - name: Check entropy state
   ansible.builtin.command: "cat /proc/sys/kernel/random/entropy_avail"
   changed_when: false
